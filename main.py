@@ -6,6 +6,7 @@ import re
 import random as rd
 
 import nltk
+#nltk.download('punkt')
 import pickle #Para guardar archivos
 
 
@@ -76,12 +77,14 @@ def normaliza(corpus_train,corpus_val):
 
 
 corpus_train, corpus_val = normaliza(corpus_train, corpus_val)
+
+
+
 #100 palabras más frecuentes de cada idioma
-
-
-
 freq100 = [nltk.FreqDist(nltk.word_tokenize(' '.join(i))).most_common(100) for i in corpus_train]
 word100 = [[j[0] for j in i] for i in freq100]
+
+
 #Normalizacion y extracción de características TF-IDF
 
 
@@ -134,7 +137,7 @@ for i in range(len(idiomas)):
     y_test[i*frases_test:(i+1)*frases_test] = i
 
 #Analisis del rendimiento del modelo
-
+print('********Rendimiento TF-IDF DOT PRODUCT SIN NORMALIZAR********')
 print('Matriz de confusion')
 print(confusion_matrix(y_test, y_pred))
 # Accuracy
@@ -179,7 +182,7 @@ for idx,val in enumerate(ficheros):
 
 
 corpus_train, corpus_val = normaliza(corpus_train, corpus_val)
-#APARTADO 5 TF-IDF CORPUS LIMPIO
+#TF-IDF CORPUS LIMPIO
 
 
 
@@ -190,7 +193,7 @@ TF_IDF = vectorizer.fit_transform(corpus_train_unido)
 corpus_val_unido = np.concatenate(corpus_val)
 y_pred = clasifica(vectorizer,TF_IDF,corpus_val_unido)
 #El y-test usamos el previo puesto que no ha cambiado
-
+print('********Rendimiento TF-IDF DOT PRODUCT NORMALIZADO********')
 print('Matriz de confusion')
 
 print(confusion_matrix(y_test, y_pred))
@@ -205,7 +208,7 @@ print('Recall (por idioma): ',recall_score(y_test, y_pred, average=None))
 
 print('Precision (por idioma): ',precision_score(y_test, y_pred, average=None))
 
-#APARTADO 6 N-GRAMAS
+
 
 
 
@@ -218,7 +221,7 @@ y_test = np.ones(frases_test*len(idiomas))
 for i in range(len(idiomas)):
     y_test[i*frases_test:(i+1)*frases_test] = i
 
-
+print('********Rendimiento BIGRAMA********')
 print('Matriz de confusion')
 
 print(confusion_matrix(y_test, y_pred))
@@ -234,7 +237,7 @@ print('Recall (por idioma): ',recall_score(y_test, y_pred, average=None))
 print('Precision (por idioma): ',precision_score(y_test, y_pred, average=None))
 
 
-#Apartado 7
+
 from sklearn.feature_extraction.text import TfidfVectorizer
 vec = TfidfVectorizer(min_df = 20)
 
@@ -255,7 +258,7 @@ model  = DecisionTreeClassifier()
 model.fit(X_train,y_train)
 y_pred = model.predict(X_test)
 print('Matriz de confusion')
-
+print('********Rendimiento DECISION TREE basado en TF-IDF (sklearn implementation)********')
 print(confusion_matrix(y_test, y_pred))
 # Accuracy
 
@@ -269,9 +272,10 @@ print('Recall (por idioma): ',recall_score(y_test, y_pred, average=None))
 print('Precision (por idioma): ',precision_score(y_test, y_pred, average=None))
 
 #Podemos saber que tokens han sido los más determinantes
+print('********PALABRAS MAS RELEVANTES PARA DIFERENCIAR ENTRE IDIOMAS********')
 n_tok = 10
 index = np.argsort(model.feature_importances_)
 tok = [index[-i-1] for i in range(n_tok)]
 important = [vec.get_feature_names()[i] for i in tok]
-print('Palabras más determinantes')
+
 print(important)

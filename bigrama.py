@@ -1,3 +1,8 @@
+import numpy as np
+import nltk
+
+from scipy import sparse
+
 class bigrama:
     def __init__(self,min_df = 0):
         self.min_df = min_df

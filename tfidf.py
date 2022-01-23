@@ -1,3 +1,5 @@
+import nltk
+import numpy as np
 class tfidf:
     def __init__(self, min_df = 0):
         self.min_df = min_df
